@@ -72,7 +72,7 @@ function gotStream(stream) {
 
   // Adjust video element size based on device dimensions
   video.width = window.innerWidth;
-  video.height = window.innerHeight * 1; // Set to 60% of the screen height
+  video.height = window.innerHeight * 0.6; // Set to 60% of the screen height
   video.srcObject = stream;
   video.classList.remove("hidden");
 
@@ -84,7 +84,7 @@ function gotStream(stream) {
 // Adjust based on device size while maintaining the image aspect ratio
 function adjustSizeForDevice(imageWidth, imageHeight) {
   const deviceWidth = window.innerWidth;
-  const deviceHeight = window.innerHeight * 1; // Limit height to 60% of screen height
+  const deviceHeight = window.innerHeight * 0.6; // Limit height to 60% of screen height
 
   const imageAspectRatio = imageWidth / imageHeight;
   const deviceAspectRatio = deviceWidth / deviceHeight;
