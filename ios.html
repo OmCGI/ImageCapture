@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Capture</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+    <div id="container">
+      <div class="main_div">
+        <!-- <svg onclick="toggleFullscreen()" width="100px" height="100px" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M9.77778 21H14.2222C17.3433 21 18.9038 21 20.0248 20.2646C20.51 19.9462 20.9267 19.5371 21.251 19.0607C22 17.9601 22 16.4279 22 13.3636C22 10.2994 22 8.76721 21.251 7.6666C20.9267 7.19014 20.51 6.78104 20.0248 6.46268C19.3044 5.99013 18.4027 5.82123 17.022 5.76086C16.3631 5.76086 15.7959 5.27068 15.6667 4.63636C15.4728 3.68489 14.6219 3 13.6337 3H10.3663C9.37805 3 8.52715 3.68489 8.33333 4.63636C8.20412 5.27068 7.63685 5.76086 6.978 5.76086C5.59733 5.82123 4.69555 5.99013 3.97524 6.46268C3.48995 6.78104 3.07328 7.19014 2.74902 7.6666C2 8.76721 2 10.2994 2 13.3636C2 16.4279 2 17.9601 2.74902 19.0607C3.07328 19.5371 3.48995 19.9462 3.97524 20.2646C5.09624 21 6.65675 21 9.77778 21ZM12 9.27273C9.69881 9.27273 7.83333 11.1043 7.83333 13.3636C7.83333 15.623 9.69881 17.4545 12 17.4545C14.3012 17.4545 16.1667 15.623 16.1667 13.3636C16.1667 11.1043 14.3012 9.27273 12 9.27273ZM12 10.9091C10.6193 10.9091 9.5 12.008 9.5 13.3636C9.5 14.7192 10.6193 15.8182 12 15.8182C13.3807 15.8182 14.5 14.7192 14.5 13.3636C14.5 12.008 13.3807 10.9091 12 10.9091ZM16.7222 10.0909C16.7222 9.63904 17.0953 9.27273 17.5556 9.27273H18.6667C19.1269 9.27273 19.5 9.63904 19.5 10.0909C19.5 10.5428 19.1269 10.9091 18.6667 10.9091H17.5556C17.0953 10.9091 16.7222 10.5428 16.7222 10.0909Z"
+            fill="#1C274C" />
+        </svg> -->
+  
+       <div style="display: flex; justify-content: space-between;">
+        <div class="hidden" id="Image_div" style="width: 40%; margin: 0 auto; float: left;">
+          <p>Image</p>
+          <img id="imaglink" style="width: 100%;">
+          <a id="downloadLink" class="hidden" download="photo.jpg" style="margin-top: 20px; display: block;">Download Photo</a>
+        </div>
+        <div class="hidden" id="canvas_div" style="width: 40%; margin: 0 auto;float: left;">
+          <p>Canvas</p>
+          <img id="imagCanvaslink" style="width: 100%;">
+  
+          <button id="downloadButton" class="hidden" style="margin-top: 20px;">Download from Canvas Image</button>
+  
+        </div>
+       </div>
+        <div class="video_div  " id="fullscreen_main">
+          <svg class="close-svg" width="30px" onclick="toggleFullscreenClose()" height="30px" viewBox="0 0 32 32"
+            version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+  
+            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+              <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-206.000000, -1037.000000)"
+                fill="red">
+                <path
+                  d="M226.95,1056.54 C227.34,1056.93 227.34,1057.56 226.95,1057.95 C226.559,1058.34 225.926,1058.34 225.536,1057.95 L222,1054.41 L218.464,1057.95 C218.074,1058.34 217.441,1058.34 217.05,1057.95 C216.66,1057.56 216.66,1056.93 217.05,1056.54 L220.586,1053 L217.05,1049.46 C216.66,1049.07 216.66,1048.44 217.05,1048.05 C217.441,1047.66 218.074,1047.66 218.464,1048.05 L222,1051.59 L225.536,1048.05 C225.926,1047.66 226.559,1047.66 226.95,1048.05 C227.34,1048.44 227.34,1049.07 226.95,1049.46 L223.414,1053 L226.95,1056.54 L226.95,1056.54 Z M234,1037 L210,1037 C207.791,1037 206,1038.79 206,1041 L206,1065 C206,1067.21 207.791,1069 210,1069 L234,1069 C236.209,1069 238,1067.21 238,1065 L238,1041 C238,1038.79 236.209,1037 234,1037 L234,1037 Z"
+                  id="cross-square" sketch:type="MSShapeGroup">
+  
+                </path>
+              </g>
+            </g>
+          </svg>
+  
+          <div class="video-button">
+            <label for="videoSource"></label><select id="videoSource"></select>
+            <button id="grabFrame">For Canvas </button>
+            <button id="takePhoto">For Photo</button>
+          </div>
+          <video autoplay playsinline class="hidden"></video>
+  
+  
+          <div class="preview">
+  
+            <div class="img">
+              <p style="position: absolute;right: 10px;top: 5px;">Photo</p>
+              <img id="img" class="hidden">
+            </div>
+  
+            <div class="main-canvas">
+              <p style="position: absolute;right: 10px;top: 5px;">Canvas</p>
+              <canvas id="myCanvas" class="hidden" style="width: 100%;height: 100%;"></canvas>
+            </div>
+          </div>
+        </div>
+  
+  
+  
+  
+      </div>
+  
+       
+ 
+
+  <script>
+    "use strict"; 
+
+    var constraints;
+    var imageCapture;
+    var mediaStream;
+    var canvasView;
+    var grabFrameButton = document.querySelector("button#grabFrame");
+    var takePhotoButton = document.querySelector("button#takePhoto");
+    var downloadButton = document.getElementById("downloadButton");
+    var canvas = document.querySelector("canvas");
+    var img = document.getElementById("img");
+    var video = document.querySelector("video");
+    var videoSelect = document.querySelector("select#videoSource");
+
+    grabFrameButton.onclick = grabFrame;
+    takePhotoButton.onclick = takePhoto;
+    videoSelect.onchange = getStream;
+
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then(gotDevices)
+      .catch((error) => {
+        console.log("enumerateDevices() error: ", error);
+      })
+      .then(getStream);
+
+    function gotDevices(deviceInfos) {
+      for (var i = 0; i !== deviceInfos.length; ++i) {
+        var deviceInfo = deviceInfos[i];
+        console.log("Found media input or output device: ", deviceInfo);
+        var option = document.createElement("option");
+        option.value = deviceInfo.deviceId;
+        if (deviceInfo.kind === "videoinput") {
+          option.text = deviceInfo.label || "Camera " + (videoSelect.length + 1);
+          videoSelect.appendChild(option);
+        }
+      }
+    }
+
+    function getStream() {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+      var videoSource = videoSelect.value;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      constraints = {
+        video: {
+          deviceId: videoSource ? { exact: videoSource } : undefined,
+          width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
+          height: isIOS ? { ideal: 720 } : { ideal: 1080 },
+        },
+      };
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(gotStream)
+        .catch((error) => {
+          console.log("getUserMedia error: ", error);
+        });
+    }
+
+    function gotStream(stream) {
+      console.log("getUserMedia() got stream: ", stream);
+      mediaStream = stream;
+      video.width = window.innerWidth;
+      video.height = window.innerHeight * 0.9;
+      video.srcObject = stream;
+      video.classList.remove("hidden");
+
+      if ('ImageCapture' in window) {
+        imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+        getCapabilities();
+      }
+    }
+
+    function adjustSizeForDevice(imageWidth, imageHeight) {
+      const deviceWidth = window.innerWidth;
+      const deviceHeight = window.innerHeight * 0.9;
+      const imageAspectRatio = imageWidth / imageHeight;
+      const deviceAspectRatio = deviceWidth / deviceHeight;
+
+      let adjustedWidth, adjustedHeight;
+      if (imageAspectRatio > deviceAspectRatio) {
+        adjustedWidth = deviceWidth;
+        adjustedHeight = deviceWidth / imageAspectRatio;
+      } else {
+        adjustedHeight = deviceHeight;
+        adjustedWidth = deviceHeight * imageAspectRatio;
+      }
+
+      return { width: adjustedWidth, height: adjustedHeight };
+    }
+
+    function grabFrame() {
+  if (imageCapture) {
+    imageCapture
+      .grabFrame()
+      .then((imageBitmap) => {
+        console.log("Grabbed frame:", imageBitmap);
+
+        const { width, height } = adjustSizeForDevice(
+          imageBitmap.width,
+          imageBitmap.height
+        );
+
+        // Set the canvas size to the image's size
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw the grabbed frame onto the canvas
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas content to a data URL (image)
+        canvasView = canvas.toDataURL("image/png");
+
+        // Update the canvas image link (imagCanvaslink) and show the canvas
+        const imgCanvasLink = document.getElementById("imagCanvaslink");
+        imgCanvasLink.src = canvasView;
+
+        // Ensure that canvas and image elements are visible
+        document.getElementById("canvas_div").classList.remove("hidden");
+        imgCanvasLink.classList.remove("hidden");
+        canvas.classList.remove("hidden");
+        downloadButton.classList.remove("hidden");
+
+        console.log("Image shown in canvas and link updated.");
+      })
+      .catch((error) => {
+        console.log("grabFrame() error: ", error);
+        grabFrameFallback(); // Fallback for iOS or unsupported devices
+      });
+  } else {
+    grabFrameFallback(); // Fallback for unsupported ImageCapture
+  }
+}
+
+// Fallback function for iOS or unsupported devices
+function grabFrameFallback() {
+  console.log("Using fallback for grabFrame");
+  const ctx = canvas.getContext("2d");
+
+  // Set the canvas size to the current video size
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  // Draw the current video frame onto the canvas
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Convert canvas to image data URL
+  const imgData = canvas.toDataURL("image/png");
+
+  // Show the captured frame in the image link (imagCanvaslink)
+  const imgCanvasLink = document.getElementById("imagCanvaslink");
+  imgCanvasLink.src = imgData;
+
+  // Ensure the canvas and image elements are visible
+  document.getElementById("canvas_div").classList.remove("hidden");
+  imgCanvasLink.classList.remove("hidden");
+  canvas.classList.remove("hidden");
+  downloadButton.classList.remove("hidden");
+
+  console.log("Fallback: Image shown in canvas and link updated.");
+}
+
+
+    function takePhoto() {
+  if (imageCapture) {
+    // If ImageCapture is available, use it
+    imageCapture
+      .takePhoto()
+      .then((blob) => {
+        const imgElement = new Image();
+        imgElement.onload = function () {
+          const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+          img.width = width;
+          img.height = height;
+          img.src = URL.createObjectURL(blob);
+          document.getElementById("imaglink").src = img.src;
+          document.getElementById("Image_div").classList.remove("hidden");
+          document.getElementById("downloadLink").href = img.src;
+          document.getElementById("downloadLink").classList.remove("hidden");
+          img.classList.remove("hidden");
+        };
+        imgElement.src = URL.createObjectURL(blob);
+      })
+      .catch((error) => {
+        console.log("takePhoto() error: ", error);
+      });
+  } else {
+    // Fallback for iOS and other devices without ImageCapture
+    console.log("ImageCapture not supported, using fallback");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas dimensions to video frame size
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current frame from the video on the canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas content to a data URL and display the captured image
+    const imgData = canvas.toDataURL("image/png");
+    img.src = imgData;
+    img.width = canvas.width;
+    img.height = canvas.height;
+    document.getElementById("imaglink").src = imgData;
+    document.getElementById("Image_div").classList.remove("hidden");
+    document.getElementById("downloadLink").href = imgData;
+    document.getElementById("downloadLink").classList.remove("hidden");
+    img.classList.remove("hidden");
+
+    // Optional: Save the image
+    const link = document.createElement("a");
+    link.href = imgData;
+    link.download = "captured-photo.png";
+    link.click();
+  }
+}
+
+
+    function downloadImage() {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "captured-image.png";
+      link.click();
+    }
+
+    downloadButton.onclick = downloadImage;
+
+    function toggleFullscreen() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      if (!isIOS) {
+        document.getElementById("fullscreen_main").classList.remove("hidden");
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      } else {
+        alert("Fullscreen mode is not supported on iOS.");
+      }
+    }
+
+    function toggleFullscreenClose() {
+   
+      document.getElementById("fullscreen_main").classList.add("hidden");
+    }
+
+    
+    
+
+    function getCapabilities() {
+      imageCapture.getPhotoCapabilities().then(function (capabilities) {
+        console.log("Camera capabilities: ", capabilities);
+      });
+    }
+
+  </script>
+</body>
+</html>
