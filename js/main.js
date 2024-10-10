@@ -180,6 +180,7 @@ function toggleFullscreen() {
 }
 
 function toggleFullscreenClose() {
+  toggleFullscreen()
   document.getElementById("fullscreen_main").classList.add("hidden");
 
  
