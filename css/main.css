@@ -247,8 +247,11 @@ img {
 
 .preview :is(.img, .main-canvas) {
   width: 200px;
-  float: left;
+  float: left; height: 150px;
   position: relative;
+}
+.img img {
+  height: 100%;
 }
 
 .close-svg {
