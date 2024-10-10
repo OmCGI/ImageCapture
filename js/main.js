@@ -105,34 +105,25 @@ function adjustSizeForDevice(imageWidth, imageHeight) {
   return { width: adjustedWidth, height: adjustedHeight };
 }
 
-// Resize and compress the image to keep the file size under 2 MB
-function resizeAndCompressImage(blob, callback) {
-  const imgElement = new Image();
-  imgElement.src = URL.createObjectURL(blob);
-  imgElement.onload = function () {
-    const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+// Get an ImageBitmap from the currently selected camera source and
+// display this with a canvas element.
+function grabFrame() {
+  imageCapture
+    .grabFrame()
+    .then(function (imageBitmap) {
+      console.log("Grabbed frame:", imageBitmap);
 
-    // Draw the image on a temporary canvas
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCanvas.width = width;
-    tempCanvas.height = height;
-    tempCtx.drawImage(imgElement, 0, 0, width, height);
+      const { width, height } = adjustSizeForDevice(imageBitmap.width, imageBitmap.height);
 
-    // Compress the image by setting a lower quality (0.8 is reasonable, adjust as needed)
-    tempCanvas.toBlob(
-      function (compressedBlob) {
-        // Check if the compressed image is less than 2 MB, if not reduce quality further
-        if (compressedBlob.size <= 2 * 1024 * 1024) {
-          callback(compressedBlob);
-        } else {
-          tempCanvas.toBlob(callback, "image/jpeg", 0.7); // Further reduce quality if needed
-        }
-      },
-      "image/jpeg",
-      0.8
-    );
-  };
+      // Adjust canvas size based on the calculated width and height
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d").drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+      canvas.classList.remove("hidden");
+    })
+    .catch(function (error) {
+      console.log("grabFrame() error: ", error);
+    });
 }
 
 // Get a Blob from the currently selected camera source and
@@ -143,28 +134,25 @@ function takePhoto() {
     .then(function (blob) {
       console.log("Took photo:", blob);
 
-      // Resize and compress the image to ensure it is below 2MB
-      resizeAndCompressImage(blob, function (compressedBlob) {
-        const imgElement = new Image();
-        imgElement.onload = function () {
-          const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+      const imgElement = new Image();
+      imgElement.onload = function () {
+        const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
 
-          // Adjust image element size based on the calculated width and height
-          img.width = width;
-          img.height = height;
-          img.src = URL.createObjectURL(compressedBlob);
+        // Adjust image element size based on the calculated width and height
+        img.width = width;
+        img.height = height;
+        img.src = URL.createObjectURL(blob);
+        const downloadLink = document.getElementById('downloadLink');
+        const imgLinksrc = document.getElementById('imaglink');
+        downloadLink.href = img.src; // Set the href to the image's URL
+        imgLinksrc.src = img.src;
+        imgLinksrc.classList.remove("hidden"); // Show the download link
+        downloadLink.classList.remove("hidden"); // Show the download link
 
-          const downloadLink = document.getElementById('downloadLink');
-          const imgLinksrc = document.getElementById('imaglink');
-          downloadLink.href = img.src; // Set the href to the image's URL
-          imgLinksrc.src = img.src;
-          imgLinksrc.classList.remove("hidden"); // Show the download link
-          downloadLink.classList.remove("hidden"); // Show the download link
+        img.classList.remove("hidden");
 
-          img.classList.remove("hidden");
-        };
-        imgElement.src = URL.createObjectURL(compressedBlob);
-      });
+      };
+      imgElement.src = URL.createObjectURL(blob);
     })
     .catch(function (error) {
       console.log("takePhoto() error: ", error);
@@ -192,6 +180,8 @@ function toggleFullscreen() {
 }
 
 function toggleFullscreenClose() {
-  toggleFullscreen();
+  toggleFullscreen()
   document.getElementById("fullscreen_main").classList.add("hidden");
+
+ 
 }
