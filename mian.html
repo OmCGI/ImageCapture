@@ -79,101 +79,124 @@
  
 
   <script>
-    "use strict"; 
+   "use strict";
 
-    var constraints;
-    var imageCapture;
-    var mediaStream;
-    var canvasView;
-    var grabFrameButton = document.querySelector("button#grabFrame");
-    var takePhotoButton = document.querySelector("button#takePhoto");
-    var downloadButton = document.getElementById("downloadButton");
-    var canvas = document.querySelector("canvas");
-    var img = document.getElementById("img");
-    var video = document.querySelector("video");
-    var videoSelect = document.querySelector("select#videoSource");
+var constraints;
+var imageCapture;
+var mediaStream;
+var canvasView;
+var grabFrameButton = document.querySelector("button#grabFrame");
+var takePhotoButton = document.querySelector("button#takePhoto");
+var downloadButton = document.getElementById("downloadButton");
+var canvas = document.querySelector("canvas");
+var img = document.getElementById("img");
+var video = document.querySelector("video");
+var videoSelect = document.querySelector("select#videoSource");
 
-    grabFrameButton.onclick = grabFrame;
-    takePhotoButton.onclick = takePhoto;
-    videoSelect.onchange = getStream;
+grabFrameButton.onclick = grabFrame;
+takePhotoButton.onclick = takePhoto;
+videoSelect.onchange = getStream;
 
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then(gotDevices)
-      .catch((error) => {
-        console.log("enumerateDevices() error: ", error);
-      })
-      .then(getStream);
+navigator.mediaDevices
+  .enumerateDevices()
+  .then(gotDevices)
+  .catch((error) => {
+    console.log("enumerateDevices() error: ", error);
+  })
+  .then(getStream);
 
-    function gotDevices(deviceInfos) {
-      for (var i = 0; i !== deviceInfos.length; ++i) {
-        var deviceInfo = deviceInfos[i];
-        console.log("Found media input or output device: ", deviceInfo);
-        var option = document.createElement("option");
-        option.value = deviceInfo.deviceId;
-        if (deviceInfo.kind === "videoinput") {
-          option.text = deviceInfo.label || "Camera " + (videoSelect.length + 1);
-          videoSelect.appendChild(option);
-        }
+function gotDevices(deviceInfos) {
+  videoSelect.innerHTML = ""; // Clear the existing options
+  var frontOptionAdded = false;
+  var backOptionAdded = false;
+
+  for (var i = 0; i !== deviceInfos.length; ++i) {
+    var deviceInfo = deviceInfos[i];
+    console.log("Found media input or output device: ", deviceInfo);
+
+    if (deviceInfo.kind === "videoinput") {
+      var option = document.createElement("option");
+      option.value = deviceInfo.deviceId;
+
+      // Explicitly label front and back cameras if available
+      if (deviceInfo.label.toLowerCase().includes("front") && !frontOptionAdded) {
+        option.text = "Front Camera";
+        videoSelect.appendChild(option);
+        frontOptionAdded = true;
+      } else if (deviceInfo.label.toLowerCase().includes("back") && !backOptionAdded) {
+        option.text = "Back Camera";
+        videoSelect.appendChild(option);
+        backOptionAdded = true;
       }
     }
+  }
+}
 
-    function getStream() {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      }
-      var videoSource = videoSelect.value;
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      constraints = {
-        video: {
-          deviceId: videoSource ? { exact: videoSource } : undefined,
-          width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
-          height: isIOS ? { ideal: 720 } : { ideal: 1080 },
-        },
-      };
-      navigator.mediaDevices
-        .getUserMedia(constraints)
-        .then(gotStream)
-        .catch((error) => {
-          console.log("getUserMedia error: ", error);
-        });
-    }
+function getStream() {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+  }
 
-    function gotStream(stream) {
-      console.log("getUserMedia() got stream: ", stream);
-      mediaStream = stream;
-      video.width = window.innerWidth;
-      video.height = window.innerHeight * 0.9;
-      video.srcObject = stream;
-      video.classList.remove("hidden");
+  var videoSource = videoSelect.value;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-      if ('ImageCapture' in window) {
-        imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
-        getCapabilities();
-      }
-    }
+  // Use 'facingMode' instead of 'deviceId' for iOS
+  constraints = {
+    video: {
+      deviceId: !isIOS && videoSource ? { exact: videoSource } : undefined,
+      facingMode: isIOS
+        ? videoSelect.value === "front"
+          ? "user"
+          : { exact: "environment" }
+        : undefined,
+      width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
+      height: isIOS ? { ideal: 720 } : { ideal: 1080 },
+    },
+  };
 
-    function adjustSizeForDevice(imageWidth, imageHeight) {
-      const deviceWidth = window.innerWidth;
-      const deviceHeight = window.innerHeight * 0.9;
-      const imageAspectRatio = imageWidth / imageHeight;
-      const deviceAspectRatio = deviceWidth / deviceHeight;
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(gotStream)
+    .catch((error) => {
+      console.log("getUserMedia error: ", error);
+    });
+}
 
-      let adjustedWidth, adjustedHeight;
-      if (imageAspectRatio > deviceAspectRatio) {
-        adjustedWidth = deviceWidth;
-        adjustedHeight = deviceWidth / imageAspectRatio;
-      } else {
-        adjustedHeight = deviceHeight;
-        adjustedWidth = deviceHeight * imageAspectRatio;
-      }
+function gotStream(stream) {
+  console.log("getUserMedia() got stream: ", stream);
+  mediaStream = stream;
+  video.width = window.innerWidth;
+  video.height = window.innerHeight * 0.9;
+  video.srcObject = stream;
+  video.classList.remove("hidden");
 
-      return { width: adjustedWidth, height: adjustedHeight };
-    }
+  if ("ImageCapture" in window) {
+    imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+    getCapabilities();
+  }
+}
 
-    function grabFrame() {
+function adjustSizeForDevice(imageWidth, imageHeight) {
+  const deviceWidth = window.innerWidth;
+  const deviceHeight = window.innerHeight * 0.9;
+  const imageAspectRatio = imageWidth / imageHeight;
+  const deviceAspectRatio = deviceWidth / deviceHeight;
+
+  let adjustedWidth, adjustedHeight;
+  if (imageAspectRatio > deviceAspectRatio) {
+    adjustedWidth = deviceWidth;
+    adjustedHeight = deviceWidth / imageAspectRatio;
+  } else {
+    adjustedHeight = deviceHeight;
+    adjustedWidth = deviceHeight * imageAspectRatio;
+  }
+
+  return { width: adjustedWidth, height: adjustedHeight };
+}
+
+function grabFrame() {
   if (imageCapture) {
     imageCapture
       .grabFrame()
@@ -217,7 +240,6 @@
   }
 }
 
-// Fallback function for iOS or unsupported devices
 function grabFrameFallback() {
   console.log("Using fallback for grabFrame");
   const ctx = canvas.getContext("2d");
@@ -245,16 +267,17 @@ function grabFrameFallback() {
   console.log("Fallback: Image shown in canvas and link updated.");
 }
 
-
-    function takePhoto() {
+function takePhoto() {
   if (imageCapture) {
-    // If ImageCapture is available, use it
     imageCapture
       .takePhoto()
       .then((blob) => {
         const imgElement = new Image();
         imgElement.onload = function () {
-          const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+          const { width, height } = adjustSizeForDevice(
+            imgElement.width,
+            imgElement.height
+          );
           img.width = width;
           img.height = height;
           img.src = URL.createObjectURL(blob);
@@ -270,7 +293,6 @@ function grabFrameFallback() {
         console.log("takePhoto() error: ", error);
       });
   } else {
-    // Fallback for iOS and other devices without ImageCapture
     console.log("ImageCapture not supported, using fallback");
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -293,7 +315,6 @@ function grabFrameFallback() {
     document.getElementById("downloadLink").classList.remove("hidden");
     img.classList.remove("hidden");
 
-    // Optional: Save the image
     const link = document.createElement("a");
     link.href = imgData;
     link.download = "captured-photo.png";
@@ -301,46 +322,21 @@ function grabFrameFallback() {
   }
 }
 
+function downloadImage() {
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = "captured-image.png";
+  link.click();
+}
 
-    function downloadImage() {
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = "captured-image.png";
-      link.click();
-    }
+downloadButton.onclick = downloadImage;
 
-    downloadButton.onclick = downloadImage;
+function getCapabilities() {
+  imageCapture.getPhotoCapabilities().then(function (capabilities) {
+    console.log("Camera capabilities: ", capabilities);
+  });
+}
 
-    function toggleFullscreen() {
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-      if (!isIOS) {
-        document.getElementById("fullscreen_main").classList.remove("hidden");
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen();
-        } else {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          }
-        }
-      } else {
-        alert("Fullscreen mode is not supported on iOS.");
-      }
-    }
-
-    function toggleFullscreenClose() {
-   
-      document.getElementById("fullscreen_main").classList.add("hidden");
-    }
-
-    
-    
-
-    function getCapabilities() {
-      imageCapture.getPhotoCapabilities().then(function (capabilities) {
-        console.log("Camera capabilities: ", capabilities);
-      });
-    }
 
   </script>
 </body>
