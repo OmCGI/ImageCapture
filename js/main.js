@@ -3,7 +3,7 @@
 var constraints;
 var imageCapture;
 var mediaStream;
-
+var canvasView;
 var grabFrameButton = document.querySelector("button#grabFrame");
 var takePhotoButton = document.querySelector("button#takePhoto");
 
@@ -72,7 +72,7 @@ function gotStream(stream) {
 
   // Adjust video element size based on device dimensions
   video.width = window.innerWidth;
-  video.height = window.innerHeight * 1; // Set to 60% of the screen height
+  video.height = window.innerHeight * 0.9; // Set to 60% of the screen height
   video.srcObject = stream;
   video.classList.remove("hidden");
 
@@ -84,7 +84,7 @@ function gotStream(stream) {
 // Adjust based on device size while maintaining the image aspect ratio
 function adjustSizeForDevice(imageWidth, imageHeight) {
   const deviceWidth = window.innerWidth;
-  const deviceHeight = window.innerHeight * 1; // Limit height to 60% of screen height
+  const deviceHeight = window.innerHeight * 0.9; // Limit height to 60% of screen height
 
   const imageAspectRatio = imageWidth / imageHeight;
   const deviceAspectRatio = deviceWidth / deviceHeight;
@@ -107,24 +107,60 @@ function adjustSizeForDevice(imageWidth, imageHeight) {
 
 // Get an ImageBitmap from the currently selected camera source and
 // display this with a canvas element.
+const downloadButton = document.getElementById("downloadButton");
+
 function grabFrame() {
   imageCapture
     .grabFrame()
     .then(function (imageBitmap) {
       console.log("Grabbed frame:", imageBitmap);
 
-      const { width, height } = adjustSizeForDevice(imageBitmap.width, imageBitmap.height);
+      const { width, height } = adjustSizeForDevice(
+        imageBitmap.width,
+        imageBitmap.height
+      );
 
       // Adjust canvas size based on the calculated width and height
       canvas.width = width;
       canvas.height = height;
-      canvas.getContext("2d").drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+ 
+      canvasView = canvas.toDataURL("image/png"); // Convert canvas to image data URL
+    
+      const imgLikcanvassrc = document.getElementById("imagCanvaslink");
+      imgLikcanvassrc.src = canvasView;
+      
+      const canvasDiv = document.getElementById("canvas_div");
+      canvasDiv.classList.remove("hidden");
+
+
+      // Show the canvas and download button after the frame is captured
       canvas.classList.remove("hidden");
+      downloadButton.classList.remove("hidden");
     })
     .catch(function (error) {
       console.log("grabFrame() error: ", error);
     });
 }
+
+// Simulate device-specific size adjustment
+function adjustSizeForDevice(width, height) {
+  // Add logic to adjust based on device, for now return the same size
+  return { width, height };
+}
+
+// Function to download the canvas content as an image
+function downloadImage() {
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png"); // Convert canvas to image data URL
+  link.download = "captured-image.png"; // Name of the image file
+  link.click(); // Simulate a click to download the image
+}
+
+// Add event listeners to buttons
+downloadButton.onclick = downloadImage;
 
 // Get a Blob from the currently selected camera source and
 // display this with an img element.
@@ -136,21 +172,24 @@ function takePhoto() {
 
       const imgElement = new Image();
       imgElement.onload = function () {
-        const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+        const { width, height } = adjustSizeForDevice(
+          imgElement.width,
+          imgElement.height
+        );
 
         // Adjust image element size based on the calculated width and height
         img.width = width;
         img.height = height;
         img.src = URL.createObjectURL(blob);
-        const downloadLink = document.getElementById('downloadLink');
-        const imgLinksrc = document.getElementById('imaglink');
+        const downloadLink = document.getElementById("downloadLink");
+        const imgLinksrc = document.getElementById("imaglink");
         downloadLink.href = img.src; // Set the href to the image's URL
         imgLinksrc.src = img.src;
         imgLinksrc.classList.remove("hidden"); // Show the download link
         downloadLink.classList.remove("hidden"); // Show the download link
-
         img.classList.remove("hidden");
-
+        const photoDiv = document.getElementById("Image_div");
+        photoDiv.classList.remove("hidden");
       };
       imgElement.src = URL.createObjectURL(blob);
     })
@@ -180,8 +219,6 @@ function toggleFullscreen() {
 }
 
 function toggleFullscreenClose() {
-  toggleFullscreen()
+  toggleFullscreen();
   document.getElementById("fullscreen_main").classList.add("hidden");
-
- 
 }
