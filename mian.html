@@ -213,31 +213,60 @@
     }
 
     function takePhoto() {
-      if (imageCapture) {
-        imageCapture
-          .takePhoto()
-          .then((blob) => {
-            const imgElement = new Image();
-            imgElement.onload = function () {
-              const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
-              img.width = width;
-              img.height = height;
-              img.src = URL.createObjectURL(blob);
-              document.getElementById("imaglink").src = img.src;
-              document.getElementById("Image_div").classList.remove("hidden");
-              document.getElementById("downloadLink").href = img.src;
-              document.getElementById("downloadLink").classList.remove("hidden");
-              img.classList.remove("hidden");
-            };
-            imgElement.src = URL.createObjectURL(blob);
-          })
-          .catch((error) => {
-            console.log("takePhoto() error: ", error);
-          });
-      } else {
-        alert("Photo capture not supported on this device.");
-      }
-    }
+  if (imageCapture) {
+    // If ImageCapture is available, use it
+    imageCapture
+      .takePhoto()
+      .then((blob) => {
+        const imgElement = new Image();
+        imgElement.onload = function () {
+          const { width, height } = adjustSizeForDevice(imgElement.width, imgElement.height);
+          img.width = width;
+          img.height = height;
+          img.src = URL.createObjectURL(blob);
+          document.getElementById("imaglink").src = img.src;
+          document.getElementById("Image_div").classList.remove("hidden");
+          document.getElementById("downloadLink").href = img.src;
+          document.getElementById("downloadLink").classList.remove("hidden");
+          img.classList.remove("hidden");
+        };
+        imgElement.src = URL.createObjectURL(blob);
+      })
+      .catch((error) => {
+        console.log("takePhoto() error: ", error);
+      });
+  } else {
+    // Fallback for iOS and other devices without ImageCapture
+    console.log("ImageCapture not supported, using fallback");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas dimensions to video frame size
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current frame from the video on the canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas content to a data URL and display the captured image
+    const imgData = canvas.toDataURL("image/png");
+    img.src = imgData;
+    img.width = canvas.width;
+    img.height = canvas.height;
+    document.getElementById("imaglink").src = imgData;
+    document.getElementById("Image_div").classList.remove("hidden");
+    document.getElementById("downloadLink").href = imgData;
+    document.getElementById("downloadLink").classList.remove("hidden");
+    img.classList.remove("hidden");
+
+    // Optional: Save the image
+    const link = document.createElement("a");
+    link.href = imgData;
+    link.download = "captured-photo.png";
+    link.click();
+  }
+}
+
 
     function downloadImage() {
       const link = document.createElement("a");
