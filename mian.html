@@ -174,43 +174,77 @@
     }
 
     function grabFrame() {
-      if (imageCapture) {
-        imageCapture
-          .grabFrame()
-          .then((imageBitmap) => {
-            const { width, height } = adjustSizeForDevice(imageBitmap.width, imageBitmap.height);
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
-            canvasView = canvas.toDataURL("image/png");
+  if (imageCapture) {
+    imageCapture
+      .grabFrame()
+      .then((imageBitmap) => {
+        console.log("Grabbed frame:", imageBitmap);
 
-            document.getElementById("imagCanvaslink").src = canvasView;
-            document.getElementById("canvas_div").classList.remove("hidden");
-            canvas.classList.remove("hidden");
-            downloadButton.classList.remove("hidden");
-          })
-          .catch((error) => {
-            console.log("grabFrame() error: ", error);
-            grabFrameFallback(); // Fallback for iOS or unsupported devices
-          });
-      } else {
-        grabFrameFallback(); // Fallback for unsupported ImageCapture
-      }
-    }
+        const { width, height } = adjustSizeForDevice(
+          imageBitmap.width,
+          imageBitmap.height
+        );
 
-    function grabFrameFallback() {
-      const ctx = canvas.getContext("2d");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Set the canvas size to the image's size
+        canvas.width = width;
+        canvas.height = height;
 
-      const imgData = canvas.toDataURL("image/png");
-      const imgLink = document.createElement("a");
-      imgLink.href = imgData;
-      imgLink.download = "captured-frame.png";
-      imgLink.click();
-    }
+        // Draw the grabbed frame onto the canvas
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas content to a data URL (image)
+        canvasView = canvas.toDataURL("image/png");
+
+        // Update the canvas image link (imagCanvaslink) and show the canvas
+        const imgCanvasLink = document.getElementById("imagCanvaslink");
+        imgCanvasLink.src = canvasView;
+
+        // Ensure that canvas and image elements are visible
+        document.getElementById("canvas_div").classList.remove("hidden");
+        imgCanvasLink.classList.remove("hidden");
+        canvas.classList.remove("hidden");
+        downloadButton.classList.remove("hidden");
+
+        console.log("Image shown in canvas and link updated.");
+      })
+      .catch((error) => {
+        console.log("grabFrame() error: ", error);
+        grabFrameFallback(); // Fallback for iOS or unsupported devices
+      });
+  } else {
+    grabFrameFallback(); // Fallback for unsupported ImageCapture
+  }
+}
+
+// Fallback function for iOS or unsupported devices
+function grabFrameFallback() {
+  console.log("Using fallback for grabFrame");
+  const ctx = canvas.getContext("2d");
+
+  // Set the canvas size to the current video size
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  // Draw the current video frame onto the canvas
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Convert canvas to image data URL
+  const imgData = canvas.toDataURL("image/png");
+
+  // Show the captured frame in the image link (imagCanvaslink)
+  const imgCanvasLink = document.getElementById("imagCanvaslink");
+  imgCanvasLink.src = imgData;
+
+  // Ensure the canvas and image elements are visible
+  document.getElementById("canvas_div").classList.remove("hidden");
+  imgCanvasLink.classList.remove("hidden");
+  canvas.classList.remove("hidden");
+  downloadButton.classList.remove("hidden");
+
+  console.log("Fallback: Image shown in canvas and link updated.");
+}
+
 
     function takePhoto() {
   if (imageCapture) {
