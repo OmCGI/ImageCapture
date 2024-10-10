@@ -8,7 +8,7 @@ var grabFrameButton = document.querySelector("button#grabFrame");
 var takePhotoButton = document.querySelector("button#takePhoto");
 
 var canvas = document.querySelector("canvas");
-var img = document.querySelector("img");
+var img = document.getElementById("img");
 var video = document.querySelector("video");
 var videoSelect = document.querySelector("select#videoSource");
 
@@ -142,7 +142,15 @@ function takePhoto() {
         img.width = width;
         img.height = height;
         img.src = URL.createObjectURL(blob);
+        const downloadLink = document.getElementById('downloadLink');
+        const imgLinksrc = document.getElementById('imaglink');
+        downloadLink.href = img.src; // Set the href to the image's URL
+        imgLinksrc.src = img.src;
+        imgLinksrc.classList.remove("hidden"); // Show the download link
+        downloadLink.classList.remove("hidden"); // Show the download link
+
         img.classList.remove("hidden");
+
       };
       imgElement.src = URL.createObjectURL(blob);
     })
@@ -174,5 +182,5 @@ function toggleFullscreen() {
 function toggleFullscreenClose() {
   document.getElementById("fullscreen_main").classList.add("hidden");
 
-  toggleFullscreen();
+ 
 }
