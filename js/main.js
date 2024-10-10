@@ -122,3 +122,16 @@ document.getElementById("fullscreen_main").classList.remove('hidden');
   }
 }
  
+
+function toggleFullscreenClose() {
+
+  document.getElementById("fullscreen_main").classList.add('hidden');
+  
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+  }
