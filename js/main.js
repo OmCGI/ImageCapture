@@ -69,10 +69,9 @@ function getStream() {
 function gotStream(stream) {
   console.log("getUserMedia() got stream: ", stream);
   mediaStream = stream;
-
   // Adjust video element size based on device dimensions
   video.width = window.innerWidth;
-  video.height = window.innerHeight * 0.9; // Set to 60% of the screen height
+  video.height = window.innerHeight * 0.9; // Set to 90% of the screen height
   video.srcObject = stream;
   video.classList.remove("hidden");
 
@@ -126,15 +125,14 @@ function grabFrame() {
 
       const ctx = canvas.getContext("2d");
       ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
- 
-      canvasView = canvas.toDataURL("image/png"); // Convert canvas to image data URL
-    
+
+      canvasView = canvas.toDataURL("image/jpg"); // Convert canvas to image data URL
+
       const imgLikcanvassrc = document.getElementById("imagCanvaslink");
       imgLikcanvassrc.src = canvasView;
-      
+
       const canvasDiv = document.getElementById("canvas_div");
       canvasDiv.classList.remove("hidden");
-
 
       // Show the canvas and download button after the frame is captured
       canvas.classList.remove("hidden");
@@ -154,8 +152,8 @@ function adjustSizeForDevice(width, height) {
 // Function to download the canvas content as an image
 function downloadImage() {
   const link = document.createElement("a");
-  link.href = canvas.toDataURL("image/png"); // Convert canvas to image data URL
-  link.download = "captured-image.png"; // Name of the image file
+  link.href = canvas.toDataURL("image/jpg"); // Convert canvas to image data URL
+  link.download = "captured-image.jpg"; // Name of the image file
   link.click(); // Simulate a click to download the image
 }
 
