@@ -195,9 +195,6 @@ video {
 
 }
 
-
-
-
 .hidden {
   display: none;
 }
@@ -250,10 +247,11 @@ img {
 
 .preview :is(.img, .main-canvas) {
   width: 200px;
-  float: left;  float: left; position: relative;
+  float: left;
+  position: relative;
 }
- 
-.close-svg{
+
+.close-svg {
   position: absolute;
   left: 20px;
   top: 10px;

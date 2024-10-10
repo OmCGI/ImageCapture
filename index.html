@@ -8,21 +8,12 @@
   <meta charset="utf-8">
   <meta id="theme-color" name="theme-color" content="#fff">
   <title>Image Capture</title>
-
   <link rel="stylesheet" href="./css/main.css">
-
 </head>
 
 <body>
-
   <div id="container">
-
-
     <div class="main_div">
-
-
-
-
       <svg onclick="toggleFullscreen()" width="100px" height="100px" viewBox="0 0 24 24" fill="none"
         xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -31,17 +22,10 @@
       </svg>
 
     </div>
-
-
-
-
-
     <div class="video_div hidden" id="fullscreen_main">
-      <svg class="close-svg" width="30px" onclick="toggleFullscreenClose()" height="30px" viewBox="0 0 32 32" version="1.1"
-        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      <svg class="close-svg" width="30px" onclick="toggleFullscreenClose()" height="30px" viewBox="0 0 32 32"
+        version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-
-
 
         <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
           <g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-206.000000, -1037.000000)"
@@ -54,27 +38,27 @@
           </g>
         </g>
       </svg>
-     
-        <div class="video-button">
-          <label for="videoSource">Video source: </label><select id="videoSource"></select>
-          <button id="grabFrame">For Canvas </button>
-          <button id="takePhoto">Photo Photo</button>
+
+      <div class="video-button">
+        <label for="videoSource"></label><select id="videoSource"></select>
+        <button id="grabFrame">For Canvas </button>
+        <button id="takePhoto">Photo Photo</button>
+      </div>
+      <video autoplay playsinline class="hidden"></video>
+
+
+      <div class="preview">
+
+        <div class="img">
+          <p style="position: absolute;right: 10px;top: 5px;">Photo</p>
+          <img>
         </div>
-        <video autoplay playsinline class="hidden"></video>
 
-
-        <div class="preview">
-
-          <div class="img">
-            <p style="position: absolute;right: 10px;top: 5px;">Photo</p>
-            <img>
-          </div>
-
-          <div class="main-canvas">
-            <p style="position: absolute;right: 10px;top: 5px;">Canvas</p>
-            <canvas class="hidden"></canvas>
-          </div>
+        <div class="main-canvas">
+          <p style="position: absolute;right: 10px;top: 5px;">Canvas</p>
+          <canvas class="hidden"></canvas>
         </div>
+      </div>
     </div>
 
 

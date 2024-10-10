@@ -83,10 +83,19 @@ function gotStream(stream) {
 function grabFrame() {
   imageCapture.grabFrame().then(function(imageBitmap) {
     console.log('Grabbed frame:', imageBitmap);
+
+    // Set canvas dimensions and draw image
     canvas.width = imageBitmap.width;
     canvas.height = imageBitmap.height;
     canvas.getContext('2d').drawImage(imageBitmap, 0, 0);
     canvas.classList.remove('hidden');
+
+    // Convert canvas to Blob and get Blob URL
+    canvas.toBlob(function(blob) {
+      const blobURL = URL.createObjectURL(blob);
+      console.log('Blob URL:', blobURL);
+    }, 'image/png'); // Specify the image type if needed
+
   }).catch(function(error) {
     console.log('grabFrame() error: ', error);
   });
@@ -124,14 +133,7 @@ document.getElementById("fullscreen_main").classList.remove('hidden');
  
 
 function toggleFullscreenClose() {
-
+  toggleFullscreen();
   document.getElementById("fullscreen_main").classList.add('hidden');
-  
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
+   
   }
