@@ -151,8 +151,8 @@ function getStream() {
           ? "user"
           : { exact: "environment" }
         : undefined,
-      width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
-      height: isIOS ? { ideal: 720 } : { ideal: 1080 },
+        width: isIOS ? { ideal: 640 } : { ideal: 1280 },  // Reduce resolution
+        height: isIOS ? { ideal: 480 } : { ideal: 720 },  // Reduce resolution
     },
   };
 
