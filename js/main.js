@@ -71,7 +71,7 @@ function gotStream(stream) {
   mediaStream = stream;
   // Adjust video element size based on device dimensions
   video.width = window.innerWidth;
-  video.height = window.innerHeight * 0.9; // Set to 90% of the screen height
+  video.height = window.innerHeight * 1; // Set to 90% of the screen height
   video.srcObject = stream;
   video.classList.remove("hidden");
 
@@ -83,7 +83,7 @@ function gotStream(stream) {
 // Adjust based on device size while maintaining the image aspect ratio
 function adjustSizeForDevice(imageWidth, imageHeight) {
   const deviceWidth = window.innerWidth;
-  const deviceHeight = window.innerHeight * 0.9; // Limit height to 60% of screen height
+  const deviceHeight = window.innerHeight * 1; // Limit height to 60% of screen height
 
   const imageAspectRatio = imageWidth / imageHeight;
   const deviceAspectRatio = deviceWidth / deviceHeight;
@@ -126,7 +126,7 @@ function grabFrame() {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
 
-      canvasView = canvas.toDataURL("image/jpeg", 0.8); // 0.8 indicates 80% quality
+      canvasView = canvas.toDataURL("image/jpeg", 0.9); // 0.9 indicates 90% quality
 
       const imgLikcanvassrc = document.getElementById("imagCanvaslink");
       imgLikcanvassrc.src = canvasView;
@@ -152,7 +152,7 @@ function adjustSizeForDevice(width, height) {
 // Function to download the canvas content as an image
 function downloadImage() {
   const link = document.createElement("a");
-  link.href = canvas.toDataURL("image/jpeg", 0.8); // Convert canvas to image data URL
+  link.href = canvas.toDataURL("image/jpeg", 0.9); // Convert canvas to image data URL
   link.download = "captured-image.jpeg"; // Name of the image file
   link.click(); // Simulate a click to download the image
 }
