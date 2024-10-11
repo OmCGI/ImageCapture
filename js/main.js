@@ -126,7 +126,7 @@ function grabFrame() {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
 
-      canvasView = canvas.toDataURL("image/jpg"); // Convert canvas to image data URL
+      canvasView = canvas.toDataURL("image/jpeg", 0.8); // 0.8 indicates 80% quality
 
       const imgLikcanvassrc = document.getElementById("imagCanvaslink");
       imgLikcanvassrc.src = canvasView;
@@ -152,8 +152,8 @@ function adjustSizeForDevice(width, height) {
 // Function to download the canvas content as an image
 function downloadImage() {
   const link = document.createElement("a");
-  link.href = canvas.toDataURL("image/jpg"); // Convert canvas to image data URL
-  link.download = "captured-image.jpg"; // Name of the image file
+  link.href = canvas.toDataURL("image/jpeg", 0.8); // Convert canvas to image data URL
+  link.download = "captured-image.jpeg"; // Name of the image file
   link.click(); // Simulate a click to download the image
 }
 
