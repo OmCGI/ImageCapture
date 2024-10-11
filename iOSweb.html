@@ -153,8 +153,8 @@ function getStream() {
       : videoSelect.value === "front"  // Add handling for Android and other devices
       ? "user"
       : { exact: "environment" }, 
-      width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
-      height: isIOS ? { ideal: 720 } : { ideal: 1080 },
+      width: isIOS ? { ideal: 1920 } : { ideal: 1920 },
+      height: isIOS ? { ideal: 1080 } : { ideal: 1080 },
     },
   };
 
@@ -170,7 +170,7 @@ function gotStream(stream) {
   console.log("getUserMedia() got stream: ", stream);
   mediaStream = stream;
   video.width = window.innerWidth;
-  video.height = window.innerHeight * 0.9;
+  video.height = window.innerHeight * 1;
   video.srcObject = stream;
   video.classList.remove("hidden");
 
@@ -182,7 +182,7 @@ function gotStream(stream) {
 
 function adjustSizeForDevice(imageWidth, imageHeight) {
   const deviceWidth = window.innerWidth;
-  const deviceHeight = window.innerHeight * 0.9;
+  const deviceHeight = window.innerHeight * 1;
   const imageAspectRatio = imageWidth / imageHeight;
   const deviceAspectRatio = deviceWidth / deviceHeight;
 
@@ -219,7 +219,7 @@ function grabFrame() {
         ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
 
         // Convert the canvas content to a data URL (image)
-        canvasView = canvas.toDataURL("image/png");
+        canvasView = canvas.toDataURL("image/jpg");
 
         // Update the canvas image link (imagCanvaslink) and show the canvas
         const imgCanvasLink = document.getElementById("imagCanvaslink");
@@ -254,7 +254,7 @@ function grabFrameFallback() {
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   // Convert canvas to image data URL
-  const imgData = canvas.toDataURL("image/png");
+  const imgData = canvas.toDataURL("image/jpg");
 
   // Show the captured frame in the image link (imagCanvaslink)
   const imgCanvasLink = document.getElementById("imagCanvaslink");
@@ -307,7 +307,7 @@ function takePhoto() {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Convert canvas content to a data URL and display the captured image
-    const imgData = canvas.toDataURL("image/png");
+    const imgData = canvas.toDataURL("image/jpg");
     img.src = imgData;
     img.width = canvas.width;
     img.height = canvas.height;
@@ -319,15 +319,15 @@ function takePhoto() {
 
     const link = document.createElement("a");
     link.href = imgData;
-    link.download = "captured-photo.png";
+    link.download = "captured-photo.jpg";
     link.click();
   }
 }
 
 function downloadImage() {
   const link = document.createElement("a");
-  link.href = canvas.toDataURL("image/png");
-  link.download = "captured-image.png";
+  link.href = canvas.toDataURL("image/jpg");
+  link.download = "captured-image.jpg";
   link.click();
 }
 
