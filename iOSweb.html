@@ -143,29 +143,27 @@ function getStream() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
   // Use 'facingMode' instead of 'deviceId' for iOS
-  const constraints = {
-  video: {
-    deviceId: !isIOS && videoSource ? { exact: videoSource } : undefined,
+  constraints = {
+    video: {
+      deviceId: !isIOS && videoSource ? { exact: videoSource } : undefined,
     facingMode: isIOS
       ? videoSelect.value === "front"
         ? "user"
         : { exact: "environment" }
       : videoSelect.value === "front"  // Add handling for Android and other devices
       ? "user"
-      : { exact: "environment" }, 
-    width: { ideal: 1280 }, // You can adjust this for resolution and size control
-    height: { ideal: 720 },
-  },
-};
-navigator.mediaDevices
-  .getUserMedia(constraints)
-  .then((stream) => {
-    const videoElement = document.querySelector('video');
-    videoElement.srcObject = stream;
-  })
-  .catch((error) => {
-    console.log("getUserMedia error: ", error);
-  });
+      : { exact: "environment" },
+        width: isIOS ? { ideal: 640 } : { ideal: 1280 },  // Reduce resolution
+        height: isIOS ? { ideal: 480 } : { ideal: 720 },  // Reduce resolution
+    },
+  };
+
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(gotStream)
+    .catch((error) => {
+      console.log("getUserMedia error: ", error);
+    });
 }
 
 function gotStream(stream) {
