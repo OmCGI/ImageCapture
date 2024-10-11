@@ -153,9 +153,9 @@ function getStream() {
       : videoSelect.value === "front"  // Add handling for Android and other devices
       ? "user"
       : { exact: "environment" },
-        width: isIOS ? { ideal: 640 } : { ideal: 1280 },  // Reduce resolution
-        height: isIOS ? { ideal: 480 } : { ideal: 720 },  // Reduce resolution
-    },
+      width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
+      height: isIOS ? { ideal: 720 } : { ideal: 1080 },
+    },  
   };
 
   navigator.mediaDevices
