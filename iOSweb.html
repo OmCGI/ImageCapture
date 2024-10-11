@@ -146,16 +146,14 @@ function getStream() {
   constraints = {
     video: {
       deviceId: !isIOS && videoSource ? { exact: videoSource } : undefined,
-    facingMode: isIOS
-      ? videoSelect.value === "front"
-        ? "user"
-        : { exact: "environment" }
-      : videoSelect.value === "front"  // Add handling for Android and other devices
-      ? "user"
-      : { exact: "environment" },
+      facingMode: isIOS
+        ? videoSelect.value === "front"
+          ? "user"
+          : { exact: "environment" }
+        : undefined,
       width: isIOS ? { ideal: 1280 } : { ideal: 1920 },
       height: isIOS ? { ideal: 720 } : { ideal: 1080 },
-    },  
+    },
   };
 
   navigator.mediaDevices
