@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,22 @@
     <link rel="stylesheet" href="./css/main.css">
     <style>
         /* Style for vertical video capture */
-        video, canvas, img {
+        video,
+        canvas,
+        img {
             width: 100vw;
             height: 100vh;
             border: 1px solid black;
-            transform: rotate(0deg); /* Rotate to make video vertical */
-            object-fit: cover; /* Ensure video and images cover the container */
+            transform: rotate(0deg);
+            /* Rotate to make video vertical */
+            object-fit: cover;
+            /* Ensure video and images cover the container */
         }
- 
     </style>
 </head>
+
 <body>
-    
+
 
     <video id="video" autoplay playsinline></video>
     <br>
@@ -59,177 +64,186 @@
         videoSelect.onchange = getStream;
 
         navigator.mediaDevices
-          .enumerateDevices()
-          .then(gotDevices)
-          .catch((error) => {
-            console.log("enumerateDevices() error: ", error);
-          })
-          .then(getStream);
+            .enumerateDevices()
+            .then(gotDevices)
+            .catch((error) => {
+                console.log("enumerateDevices() error: ", error);
+            })
+            .then(getStream);
 
         function gotDevices(deviceInfos) {
-          for (var i = 0; i !== deviceInfos.length; ++i) {
-            var deviceInfo = deviceInfos[i];
-            console.log("Found media input or output device: ", deviceInfo);
-            var option = document.createElement("option");
-            option.value = deviceInfo.deviceId;
-            if (deviceInfo.kind === "videoinput") {
-              option.text = deviceInfo.label || "Camera " + (videoSelect.length + 1);
-              videoSelect.appendChild(option);
+            for (var i = 0; i !== deviceInfos.length; ++i) {
+                var deviceInfo = deviceInfos[i];
+                console.log("Found media input or output device: ", deviceInfo);
+                var option = document.createElement("option");
+                option.value = deviceInfo.deviceId;
+                if (deviceInfo.kind === "videoinput") {
+                    option.text = deviceInfo.label || "Camera " + (videoSelect.length + 1);
+                    videoSelect.appendChild(option);
+                }
             }
-          }
         }
 
         function getStream() {
-          if (mediaStream) {
-            mediaStream.getTracks().forEach((track) => {
-              track.stop();
-            });
-          }
-          var videoSource = videoSelect.value;
-          constraints = {
-            video: {
-              deviceId: videoSource ? { exact: videoSource } : undefined,
-              width: { ideal: 1080 }, // Adjusted for vertical capture
-              height: { ideal: 1920 }, // Adjusted for vertical capture
-              facingMode: "user" // Use front camera for vertical capture
-            },
-          };
-          navigator.mediaDevices
-            .getUserMedia(constraints)
-            .then(gotStream)
-            .catch((error) => {
-              console.log("getUserMedia error: ", error);
-            });
+            if (mediaStream) {
+                mediaStream.getTracks().forEach((track) => {
+                    track.stop();
+                });
+            }
+            var videoSource = videoSelect.value;
+            constraints = {
+                video: {
+                    deviceId: videoSource ? { exact: videoSource } : undefined,
+                    width: { ideal: 1080 }, // Adjusted for vertical capture
+                    height: { ideal: 1920 }, // Adjusted for vertical capture
+                    facingMode: "user" // Use front camera for vertical capture
+                },
+            };
+            navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(gotStream)
+                .catch((error) => {
+                    console.log("getUserMedia error: ", error);
+                });
         }
 
         function gotStream(stream) {
-          console.log("getUserMedia() got stream: ", stream);
-          mediaStream = stream;
-          video.srcObject = stream;
-          video.classList.remove("hidden");
+            console.log("getUserMedia() got stream: ", stream);
+            mediaStream = stream;
+            video.srcObject = stream;
+            video.classList.remove("hidden");
 
-          // Set up ImageCapture for high-quality capture
-          imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
-          getCapabilities();
+            // Set up ImageCapture for high-quality capture
+            imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+            getCapabilities();
         }
-
         function grabFrame() {
-          imageCapture
-            .grabFrame()
-            .then(function (imageBitmap) {
-              console.log("Grabbed frame:", imageBitmap);
+            imageCapture
+                .grabFrame()
+                .then(function (imageBitmap) {
+                    console.log("Grabbed frame:", imageBitmap);
 
-              const { width, height } = adjustSizeForDevice(
-                imageBitmap.width,
-                imageBitmap.height
-              );
+                    // Set the canvas to a higher resolution than displayed
+                    const highResWidth = imageBitmap.width * 2; // Double the width for higher resolution
+                    const highResHeight = imageBitmap.height * 2; // Double the height for higher resolution
 
-              canvas.width = width;
-              canvas.height = height;
+                    // Set canvas resolution (high res)
+                    canvas.width = highResWidth;
+                    canvas.height = highResHeight;
 
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(imageBitmap, 0, 0, canvas.width, canvas.height);
+                    const ctx = canvas.getContext("2d");
 
-              canvasView = canvas.toDataURL("image/jpg");
+                    // Enable high-quality image smoothing
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
 
-              const imgLikcanvassrc = document.getElementById("imagCanvaslink");
-              imgLikcanvassrc.src = canvasView;
+                    // Draw the high-resolution image to the canvas
+                    ctx.drawImage(imageBitmap, 0, 0, highResWidth, highResHeight);
 
-              const canvasDiv = document.getElementById("canvas_div");
-              canvasDiv.classList.remove("hidden");
+                    // Convert canvas content to data URL and display the image
+                    canvasView = canvas.toDataURL("image/jpeg", 1.0); // Use JPEG for better quality
 
-              canvas.classList.remove("hidden");
-              document.getElementById("downloadButton").classList.remove("hidden");
-            })
-            .catch(function (error) {
-              console.log("grabFrame() error: ", error);
-            });
+                    const imgLikcanvassrc = document.getElementById("imagCanvaslink");
+                    imgLikcanvassrc.src = canvasView;
+
+                    const canvasDiv = document.getElementById("canvas_div");
+                    canvasDiv.classList.remove("hidden");
+
+                    // Show the canvas and download button after the frame is captured
+                    canvas.classList.remove("hidden");
+                    downloadButton.classList.remove("hidden");
+                })
+                .catch(function (error) {
+                    console.log("grabFrame() error: ", error);
+                });
         }
+
 
         function adjustSizeForDevice(width, height) {
-          const deviceWidth = window.innerWidth;
-          const deviceHeight = window.innerHeight * 0.9;
+            const deviceWidth = window.innerWidth;
+            const deviceHeight = window.innerHeight * 0.9;
 
-          const imageAspectRatio = width / height;
-          const deviceAspectRatio = deviceWidth / deviceHeight;
+            const imageAspectRatio = width / height;
+            const deviceAspectRatio = deviceWidth / deviceHeight;
 
-          let adjustedWidth, adjustedHeight;
+            let adjustedWidth, adjustedHeight;
 
-          if (imageAspectRatio > deviceAspectRatio) {
-            adjustedWidth = deviceWidth;
-            adjustedHeight = deviceWidth / imageAspectRatio;
-          } else {
-            adjustedHeight = deviceHeight;
-            adjustedWidth = deviceHeight * imageAspectRatio;
-          }
+            if (imageAspectRatio > deviceAspectRatio) {
+                adjustedWidth = deviceWidth;
+                adjustedHeight = deviceWidth / imageAspectRatio;
+            } else {
+                adjustedHeight = deviceHeight;
+                adjustedWidth = deviceHeight * imageAspectRatio;
+            }
 
-          return { width: adjustedWidth, height: adjustedHeight };
+            return { width: adjustedWidth, height: adjustedHeight };
         }
 
         function downloadImage() {
-          const link = document.createElement("a");
-          link.href = canvas.toDataURL("image/jpg");
-          link.download = "captured-image.jpg";
-          link.click();
+            const link = document.createElement("a");
+            link.href = canvas.toDataURL("image/jpg");
+            link.download = "captured-image.jpg";
+            link.click();
         }
 
         document.getElementById("downloadButton").onclick = downloadImage;
 
         function takePhoto() {
-          imageCapture
-            .takePhoto()
-            .then(function (blob) {
-              console.log("Took photo:", blob);
+            imageCapture
+                .takePhoto()
+                .then(function (blob) {
+                    console.log("Took photo:", blob);
 
-              const imgElement = new Image();
-              imgElement.onload = function () {
-                const { width, height } = adjustSizeForDevice(
-                  imgElement.width,
-                  imgElement.height
-                );
+                    const imgElement = new Image();
+                    imgElement.onload = function () {
+                        const { width, height } = adjustSizeForDevice(
+                            imgElement.width,
+                            imgElement.height
+                        );
 
-                img.width = width;
-                img.height = height;
-                img.src = URL.createObjectURL(blob);
+                        img.width = width;
+                        img.height = height;
+                        img.src = URL.createObjectURL(blob);
 
-                const downloadLink = document.getElementById("downloadLink");
-                const imgLinksrc = document.getElementById("imaglink");
-                downloadLink.href = img.src;
-                imgLinksrc.src = img.src;
-                imgLinksrc.classList.remove("hidden");
-                downloadLink.classList.remove("hidden");
-                img.classList.remove("hidden");
-                document.getElementById("Image_div").classList.remove("hidden");
-              };
-              imgElement.src = URL.createObjectURL(blob);
-            })
-            .catch(function (error) {
-              console.log("takePhoto() error: ", error);
-            });
+                        const downloadLink = document.getElementById("downloadLink");
+                        const imgLinksrc = document.getElementById("imaglink");
+                        downloadLink.href = img.src;
+                        imgLinksrc.src = img.src;
+                        imgLinksrc.classList.remove("hidden");
+                        downloadLink.classList.remove("hidden");
+                        img.classList.remove("hidden");
+                        document.getElementById("Image_div").classList.remove("hidden");
+                    };
+                    imgElement.src = URL.createObjectURL(blob);
+                })
+                .catch(function (error) {
+                    console.log("takePhoto() error: ", error);
+                });
         }
 
         function getCapabilities() {
-          imageCapture.getPhotoCapabilities().then(function (capabilities) {
-            console.log("Camera capabilities: ", capabilities);
-          });
+            imageCapture.getPhotoCapabilities().then(function (capabilities) {
+                console.log("Camera capabilities: ", capabilities);
+            });
         }
 
         function toggleFullscreen() {
-          document.getElementById("fullscreen_main").classList.remove("hidden");
+            document.getElementById("fullscreen_main").classList.remove("hidden");
 
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-          } else {
-            if (document.exitFullscreen) {
-              document.exitFullscreen();
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
             }
-          }
         }
 
         function toggleFullscreenClose() {
-          toggleFullscreen();
-          document.getElementById("fullscreen_main").classList.add("hidden");
+            toggleFullscreen();
+            document.getElementById("fullscreen_main").classList.add("hidden");
         }
     </script>
 </body>
+
 </html>
