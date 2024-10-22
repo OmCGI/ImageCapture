@@ -3,48 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internet Speed Test</title>
+    <title>Network Speed Monitor</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        #speedResult {
+        #speed {
             font-size: 24px;
+            font-weight: bold;
             margin-top: 20px;
-            color: #4CAF50; /* Green color for the result */
         }
     </style>
 </head>
 <body>
-    <h1>Check Your Internet Speed</h1>
-    <button onclick="checkInternetSpeed()">Test Speed</button>
-    <p id="speedResult"></p>
-
+    <h1>Network Speed Monitor</h1>
+    <div id="speed">Checking network speed...</div>
+    
     <script>
-        function checkInternetSpeed() {
-            const image = new Image();
-            const startTime = new Date().getTime();
-            const imageSize = 4995374; // Size in bytes of the image (approx. 5MB)
 
-            // Use a large public image URL for testing
-            image.src = "https://www.gstatic.com/webp/gallery/1.jpg?cacheBuster=" + Math.random(); 
-            
-            image.onload = function () {
-                const endTime = new Date().getTime();
-                const duration = (endTime - startTime) / 1000; // Duration in seconds
-                const bitsLoaded = imageSize * 8; // Convert bytes to bits
-                const speedMbps = (bitsLoaded / duration / 1024 / 1024).toFixed(2); // Speed in Mbps
+        // Check if the Network Information API is available
+if ('connection' in navigator) {
+    const speedElement = document.getElementById('speed');
 
-                // Display the result on the page
-                document.getElementById("speedResult").innerText = `Your internet speed is ${speedMbps} Mbps`;
-            };
+    function updateNetworkSpeed() {
+        const connection = navigator.connection;
+        
+        // Check the type of connection
+        const type = connection.effectiveType; 
+        let speed = '';
 
-            image.onerror = function () {
-                document.getElementById("speedResult").innerText = "Error measuring speed. Please try again.";
-            };
+        // Estimating speed based on the effectiveType
+        switch (type) {
+            case 'slow-2g':
+                speed = 'Very Slow (2G)';
+                break;
+            case '2g':
+                speed = 'Slow (2G)';
+                break;
+            case '3g':
+                speed = 'Moderate (3G)';
+                break;
+            case '4g':
+                speed = 'Fast (4G)';
+                break;
+            case '5g':
+                speed = 'Very Fast (5G)';
+                break;
+            default:
+                speed = 'Unknown';
         }
+
+        // Display the connection type and speed
+        speedElement.innerText = `Connection Type: ${type}, Estimated Speed: ${speed}`;
+    }
+
+    // Initial check
+    updateNetworkSpeed();
+
+    // Update speed every 5 seconds
+    setInterval(updateNetworkSpeed, 5000);
+
+    // Listen for changes in network state
+    connection.addEventListener('change', updateNetworkSpeed);
+} else {
+    document.getElementById('speed').innerText = 'Network Information API not supported on this device.';
+}
+
     </script>
 </body>
 </html>
