@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internet Speed Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #speedResult {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #4CAF50; /* Green color for the result */
+        }
+    </style>
 </head>
 <body>
-    <h1>Check Internet Speed</h1>
+    <h1>Check Your Internet Speed</h1>
     <button onclick="checkInternetSpeed()">Test Speed</button>
     <p id="speedResult"></p>
 
@@ -16,7 +28,8 @@
             const startTime = new Date().getTime();
             const imageSize = 4995374; // Size in bytes of the image (approx. 5MB)
 
-            image.src = "https://www.example.com/sample-image.jpg?cacheBuster=" + Math.random(); // Use a valid image URL
+            // Use a large public image URL for testing
+            image.src = "https://www.gstatic.com/webp/gallery/1.jpg?cacheBuster=" + Math.random(); 
             
             image.onload = function () {
                 const endTime = new Date().getTime();
@@ -24,11 +37,12 @@
                 const bitsLoaded = imageSize * 8; // Convert bytes to bits
                 const speedMbps = (bitsLoaded / duration / 1024 / 1024).toFixed(2); // Speed in Mbps
 
+                // Display the result on the page
                 document.getElementById("speedResult").innerText = `Your internet speed is ${speedMbps} Mbps`;
             };
 
             image.onerror = function () {
-                document.getElementById("speedResult").innerText = "Error in measuring speed.";
+                document.getElementById("speedResult").innerText = "Error measuring speed. Please try again.";
             };
         }
     </script>
