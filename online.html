@@ -3,88 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Speed Monitor</title>
+    <title>Network Speed Test</title>
     <style>
-        #speed {
-            font-size: 24px;
-            font-weight: bold;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #result {
             margin-top: 20px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Network Speed Monitor</h1>
-    <div id="speed">Checking network speed...</div>
-    
+    <h1>Network Speed Test</h1>
+    <button id="testSpeed">Test Speed</button>
+    <div id="result"></div>
+
     <script>
+        async function testNetworkSpeed() {
+            const imageUrl = 'https://via.placeholder.com/1000000'; // 1MB placeholder image
+            const startTime = performance.now();
 
-        // Check if the Network Information API is available
-if ('connection' in navigator) {
-    const speedElement = document.getElementById('speed');
+            try {
+                // Fetch the image
+                const response = await fetch(imageUrl);
+                const data = await response.blob(); // Convert response to Blob
+                const endTime = performance.now();
 
-    function updateNetworkSpeed() {
-        const connection = navigator.connection;
-        
-        // Check the type of connection
-        const type = connection.effectiveType; 
-        let speed = '';
+                // Calculate the speed
+                const fileSizeInBits = data.size * 8; // Convert bytes to bits
+                const durationInSeconds = (endTime - startTime) / 1000; // Convert milliseconds to seconds
+                const speedMbps = (fileSizeInBits / durationInSeconds / 1024 / 1024).toFixed(2); // Convert to Mbps
 
-        // Estimating speed based on the effectiveType
-        switch (type) {
-            case 'slow-2g':
-                speed = 'Very Slow (2G)';
-                break;
-            case '2g':
-                speed = 'Slow (2G)';
-                break;
-            case '3g':
-                speed = 'Moderate (3G)';
-                break;
-            case '4g':
-                speed = 'Fast (4G)';
-                break;
-            case '5g':
-                speed = 'Very Fast (5G)';
-                break;
-            default:
-                speed = 'Unknown';
+                document.getElementById('result').innerText = `Download Speed: ${speedMbps} Mbps`;
+            } catch (error) {
+                console.error('Error fetching the image:', error);
+                document.getElementById('result').innerText = 'Error testing speed. Please try again.';
+            }
         }
 
-        // Display the connection type and speed
-        speedElement.innerText = `Connection Type: ${type}, Estimated Speed: ${speed}`;
-    }
-
-    // Initial check
-    updateNetworkSpeed();
-
-    // Update speed every 5 seconds
-    setInterval(updateNetworkSpeed, 5000);
-
-    // Listen for changes in network state
-    connection.addEventListener('change', updateNetworkSpeed);
-} else {
-    document.getElementById('speed').innerText = 'Network Information API not supported on this device.';
-}
-
-
-// Check if the Network Information API is available
-if ('connection' in navigator) {
-    const connection = navigator.connection;
-
-    // Log connection details
-    console.log('Connection Type:', connection.effectiveType);
-    console.log('Downlink:', connection.downlink, 'Mbps');
-    console.log('RTT:', connection.rtt, 'ms');
-
-    // Listen for changes in connection type
-    connection.addEventListener('change', () => {
-        console.log('Connection changed to:', connection.effectiveType);
-    });
-} else {
-    console.log('Network Information API is not supported on this browser.');
-}
-
-
+        document.getElementById('testSpeed').addEventListener('click', testNetworkSpeed);
     </script>
 </body>
 </html>
