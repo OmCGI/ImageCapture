@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Speed Test</title>
+</head>
+<body>
+    <h1>Check Internet Speed</h1>
+    <button onclick="checkInternetSpeed()">Test Speed</button>
+    <p id="speedResult"></p>
+
+    <script>
+        function checkInternetSpeed() {
+            const image = new Image();
+            const startTime = new Date().getTime();
+            const imageSize = 4995374; // Size in bytes of the image (approx. 5MB)
+
+            image.src = "https://www.example.com/sample-image.jpg?cacheBuster=" + Math.random(); // Use a valid image URL
+            
+            image.onload = function () {
+                const endTime = new Date().getTime();
+                const duration = (endTime - startTime) / 1000; // Duration in seconds
+                const bitsLoaded = imageSize * 8; // Convert bytes to bits
+                const speedMbps = (bitsLoaded / duration / 1024 / 1024).toFixed(2); // Speed in Mbps
+
+                document.getElementById("speedResult").innerText = `Your internet speed is ${speedMbps} Mbps`;
+            };
+
+            image.onerror = function () {
+                document.getElementById("speedResult").innerText = "Error in measuring speed.";
+            };
+        }
+    </script>
+</body>
+</html>
