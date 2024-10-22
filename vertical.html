@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Video Capture with Image Capture</title>
+    <style>
+        /* Style for vertical video capture */
+        video, canvas {
+            width: 320px;
+            height: 480px; 
+           
+            border: 1px solid black;
+        }
+
+        #video {
+            transform: rotate(00deg); /* Rotate to make it vertical */
+            object-fit: cover; /* Ensure the video covers the container */
+        }
+
+        img {
+            margin-top: 20px;
+            width: 320px;
+            height: 480px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Vertical Video Capture with Image Capture</h1>
+    
+    <!-- Video element to display the camera feed -->
+    <video id="video" autoplay playsinline></video>
+    <br>
+    <!-- Button to capture the image -->
+    <button id="captureButton">Capture Image</button>
+    <br>
+    <!-- Canvas to draw the captured video frame -->
+    <canvas id="canvas" width="320" height="480"></canvas>
+    <br>
+    <!-- Display the captured image -->
+    <img id="capturedImage" alt="Captured Image" />
+
+    <script>
+        // Function to start the video stream in vertical orientation
+        async function startVideo() {
+            try {
+                const videoElement = document.getElementById('video');
+
+                // Request video stream with vertical aspect ratio
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment', // Use front camera for vertical video
+                        aspectRatio: 9 / 16  // Aspect ratio for vertical video
+                    }
+                });
+                
+                // Attach the stream to the video element
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing the camera: ', error);
+            }
+        }
+
+        // Function to capture the current frame from the video
+        function captureImage() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+
+            // Draw the current frame of the video onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert the canvas content to a data URL and display it in an image element
+            const capturedImage = document.getElementById('capturedImage');
+            capturedImage.src = canvas.toDataURL('image/png');
+        }
+
+        // Add event listener to the capture button
+        document.getElementById('captureButton').addEventListener('click', captureImage);
+
+        // Start the video stream when the page loads
+        window.addEventListener('load', startVideo);
+    </script>
+</body>
+</html>
