@@ -124,8 +124,8 @@
                     console.log("Grabbed frame:", imageBitmap);
 
                     // Set the canvas to a higher resolution than displayed
-                    const highResWidth = imageBitmap.width * 2; // Double the width for higher resolution
-                    const highResHeight = imageBitmap.height * 2; // Double the height for higher resolution
+                    const highResWidth = imageBitmap.width * 1; // Double the width for higher resolution
+                    const highResHeight = imageBitmap.height * 1; // Double the height for higher resolution
 
                     // Set canvas resolution (high res)
                     canvas.width = highResWidth;
@@ -161,7 +161,7 @@
 
         function adjustSizeForDevice(width, height) {
             const deviceWidth = window.innerWidth;
-            const deviceHeight = window.innerHeight * 0.9;
+            const deviceHeight = window.innerHeight * 1;
 
             const imageAspectRatio = width / height;
             const deviceAspectRatio = deviceWidth / deviceHeight;
