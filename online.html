@@ -66,6 +66,25 @@ if ('connection' in navigator) {
     document.getElementById('speed').innerText = 'Network Information API not supported on this device.';
 }
 
+
+// Check if the Network Information API is available
+if ('connection' in navigator) {
+    const connection = navigator.connection;
+
+    // Log connection details
+    console.log('Connection Type:', connection.effectiveType);
+    console.log('Downlink:', connection.downlink, 'Mbps');
+    console.log('RTT:', connection.rtt, 'ms');
+
+    // Listen for changes in connection type
+    connection.addEventListener('change', () => {
+        console.log('Connection changed to:', connection.effectiveType);
+    });
+} else {
+    console.log('Network Information API is not supported on this browser.');
+}
+
+
     </script>
 </body>
 </html>
