@@ -72,22 +72,25 @@
         }
 
         function getStream() {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
-            let videoSource = videoSelect.value;
-            let constraints = {
-                video: {
-                    deviceId: videoSource ? { exact: videoSource } : undefined,
-                    width: { ideal: 1080 },
-                    height: { ideal: 1320 },
-                    facingMode: "environment"
-                }
-            };
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(gotStream)
-                .catch(error => console.log("getUserMedia error:", error));
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+    }
+    let videoSource = videoSelect.value;
+    let constraints = {
+        video: {
+            deviceId: videoSource ? { exact: videoSource } : undefined,
+            width: { min: 1280, ideal: 1920, max: 2560 }, // Range for higher resolution
+            height: { min: 720, ideal: 1080, max: 1440 }, // Range for higher resolution
+            aspectRatio: { ideal: 16 / 9 }, // Common aspect ratio for high-quality video
+            frameRate: { ideal: 30, max: 60 }, // Preferred frame rate
+            facingMode: "environment"
         }
+    };
+    navigator.mediaDevices.getUserMedia(constraints)
+        .then(gotStream)
+        .catch(error => console.log("getUserMedia error:", error));
+}
+
 
         function gotStream(stream) {
             mediaStream = stream;
