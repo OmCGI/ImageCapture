@@ -107,7 +107,7 @@
             canvas.height = deviceHeight;
 
             const ctx = canvas.getContext("2d");
-            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingEnabled = false;
             ctx.imageSmoothingQuality = 'high';
 
             // Calculate scaling to crop and center the image within the viewport
@@ -117,7 +117,7 @@
 
             ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
-            const canvasDataURL = canvas.toDataURL("image/jpeg", 2.0);
+            const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
             canvas.classList.remove("hidden");
