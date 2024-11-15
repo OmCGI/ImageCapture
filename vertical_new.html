@@ -28,7 +28,7 @@
     <button id="takePhoto">Take Photo</button>
     <button id="downloadButton" class="hidden">Download Image</button>
     <br>
-    <canvas id="canvas" class="hidden"></canvas>
+    <canvas id="canvas" class="hidden" style="display: none;"></canvas>
     <img id="img" class="hidden" alt="Captured Image" />
     <br>
     <div id="canvas_div" class="hidden">
@@ -80,7 +80,7 @@
                 video: {
                     deviceId: videoSource ? { exact: videoSource } : undefined,
                     width: { ideal: 1080 },
-                    height: { ideal: 1920 },
+                    height: { ideal: 1320 },
                     facingMode: "environment"
                 }
             };
@@ -96,24 +96,32 @@
         }
 
         function grabFrame() {
-            imageCapture.grabFrame()
-                .then(imageBitmap => {
-                    const highResWidth = imageBitmap.width;
-                    const highResHeight = imageBitmap.height;
-                    canvas.width = highResWidth;
-                    canvas.height = highResHeight;
-                    const ctx = canvas.getContext("2d");
-                    ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
-                    ctx.drawImage(imageBitmap, 0, 0, highResWidth, highResHeight);
-                    const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
-                    document.getElementById("imagCanvaslink").src = canvasDataURL;
-                    document.getElementById("canvas_div").classList.remove("hidden");
-                    canvas.classList.remove("hidden");
-                    downloadButton.classList.remove("hidden");
-                })
-                .catch(error => console.log("grabFrame() error:", error));
-        }
+         imageCapture.grabFrame()
+        .then(imageBitmap => {
+            const deviceWidth = window.innerWidth;
+            const deviceHeight = window.innerHeight;
+            canvas.width = deviceWidth;
+            canvas.height = deviceHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // Calculate scaling to crop and center the image within the viewport
+            const scale = Math.max(deviceWidth / imageBitmap.width, deviceHeight / imageBitmap.height);
+            const x = (deviceWidth / 2) - (imageBitmap.width / 2) * scale;
+            const y = (deviceHeight / 2) - (imageBitmap.height / 2) * scale;
+
+            ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
+
+            const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
+            document.getElementById("imagCanvaslink").src = canvasDataURL;
+            document.getElementById("canvas_div").classList.remove("hidden");
+            canvas.classList.remove("hidden");
+            downloadButton.classList.remove("hidden");
+        })
+        .catch(error => console.log("grabFrame() error:", error));
+}
 
         function takePhoto() {
             imageCapture.takePhoto()
