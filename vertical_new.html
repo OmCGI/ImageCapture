@@ -97,27 +97,26 @@
             video.srcObject = stream;
             imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
         }
+
         function grabFrame() {
          imageCapture.grabFrame()
         .then(imageBitmap => {
-            // Set canvas size to match the imageBitmap's resolution
             const deviceWidth = window.innerWidth;
             const deviceHeight = window.innerHeight;
-            canvas.width = Math.max(imageBitmap.width, deviceWidth);
-            canvas.height = Math.max(imageBitmap.height, deviceHeight);
+            canvas.width = deviceWidth;
+            canvas.height = deviceHeight;
 
             const ctx = canvas.getContext("2d");
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
 
-            // Calculate the scaling to crop and center the image within the viewport
+            // Calculate scaling to crop and center the image within the viewport
             const scale = Math.max(deviceWidth / imageBitmap.width, deviceHeight / imageBitmap.height);
-            const x = (canvas.width / 2) - (imageBitmap.width / 2) * scale;
-            const y = (canvas.height / 2) - (imageBitmap.height / 2) * scale;
+            const x = (deviceWidth / 2) - (imageBitmap.width / 2) * scale;
+            const y = (deviceHeight / 2) - (imageBitmap.height / 2) * scale;
 
             ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
-            // Export the canvas content to a data URL
             const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
@@ -126,7 +125,6 @@
         })
         .catch(error => console.log("grabFrame() error:", error));
 }
-
 
         function takePhoto() {
             imageCapture.takePhoto()
