@@ -103,11 +103,11 @@
         .then(imageBitmap => {
             const deviceWidth = window.innerWidth;
             const deviceHeight = window.innerHeight;
-            canvas.width = deviceWidth;
-            canvas.height = deviceHeight;
+            canvas.width = deviceWidth * 2;
+            canvas.height = deviceHeight * 2;
 
             const ctx = canvas.getContext("2d");
-            ctx.imageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
 
             // Calculate scaling to crop and center the image within the viewport
