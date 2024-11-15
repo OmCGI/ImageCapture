@@ -82,7 +82,7 @@
             width: { min: 1280, ideal: 1920, max: 2560 }, // Range for higher resolution
             height: { min: 720, ideal: 1080, max: 1440 }, // Range for higher resolution
             aspectRatio: { ideal: 16 / 9 }, // Common aspect ratio for high-quality video
-            frameRate: { ideal: 30, max: 60 }, // Preferred frame rate
+            frameRate: { ideal: 60, max: 60 }, // Preferred frame rate
             facingMode: "environment"
         }
     };
@@ -117,7 +117,7 @@
 
             ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
-            const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
+            const canvasDataURL = canvas.toDataURL("image/jpeg", 2.0);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
             canvas.classList.remove("hidden");
