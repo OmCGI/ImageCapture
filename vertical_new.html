@@ -79,7 +79,8 @@
     let constraints = {
         video: {
             deviceId: videoSource ? { exact: videoSource } : undefined,
-            video: { width: { ideal: 1920 }, height: { ideal: 1080 } },
+            width: { min: 1280, ideal: 1920, max: 2560 }, // Range for higher resolution
+            height: { min: 720, ideal: 1080, max: 1440 }, // Range for higher resolution
             aspectRatio: { ideal: 16 / 9 }, // Common aspect ratio for high-quality video
             frameRate: { ideal: 30, max: 60 }, // Preferred frame rate
             facingMode: "environment"
@@ -96,9 +97,8 @@
             video.srcObject = stream;
             imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
         }
-
         function grabFrame() {
-    imageCapture.grabFrame()
+         imageCapture.grabFrame()
         .then(imageBitmap => {
             // Set canvas size to match the imageBitmap's resolution
             const deviceWidth = window.innerWidth;
