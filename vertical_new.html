@@ -104,29 +104,26 @@
         function grabFrame() {
     imageCapture.grabFrame()
         .then(imageBitmap => {
-            // Adjust the canvas size to match the device's full viewport
-            const deviceWidth = window.innerWidth;
-            const deviceHeight = window.innerHeight;
-            canvas.width = deviceWidth;
-            canvas.height = deviceHeight;
+            // Set higher canvas resolution for better quality
+            const highResolutionWidth = window.innerWidth * 2; // Double the resolution
+            const highResolutionHeight = window.innerHeight * 2;
+
+            // Adjust the canvas size to a higher resolution
+            canvas.width = highResolutionWidth;
+            canvas.height = highResolutionHeight;
 
             const ctx = canvas.getContext("2d");
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
 
-            // Calculate the appropriate scaling to fill the viewport, keeping the aspect ratio
-            const scale = Math.max(deviceWidth / imageBitmap.width, deviceHeight / imageBitmap.height);
-            const scaledWidth = imageBitmap.width * scale;
-            const scaledHeight = imageBitmap.height * scale;
+            // Calculate scaling to cover the high-resolution canvas
+            const scale = Math.max(highResolutionWidth / imageBitmap.width, highResolutionHeight / imageBitmap.height);
+            const x = (highResolutionWidth - imageBitmap.width * scale) / 2;
+            const y = (highResolutionHeight - imageBitmap.height * scale) / 2;
 
-            // Center the image within the viewport
-            const x = (deviceWidth - scaledWidth) / 2;
-            const y = (deviceHeight - scaledHeight) / 2;
+            ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
-            // Draw the image on the canvas
-            ctx.drawImage(imageBitmap, x, y, scaledWidth, scaledHeight);
-
-            // Generate a high-quality data URL for downloading
+            // Generate a high-quality data URL for download
             const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
@@ -135,6 +132,7 @@
         })
         .catch(error => console.log("grabFrame() error:", error));
 }
+
 
         function takePhoto() {
             imageCapture.takePhoto()
