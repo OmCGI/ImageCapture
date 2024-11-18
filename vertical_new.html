@@ -172,11 +172,17 @@
         }
 
         downloadButton.onclick = function () {
-            const link = document.createElement("a");
-            link.href = canvas.toDataURL("image/jpeg", 1.0);
-            link.download = "captured-image.jpg";
-            link.click();
-        };
+    const imageDataUrl = canvas.toDataURL("image/jpeg", 1.0);
+    if (navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("iPad")) {
+        window.open(imageDataUrl, "_blank");
+    } else {
+        const link = document.createElement("a");
+        link.href = imageDataUrl;
+        link.download = "captured-image.jpg";
+        link.click();
+    }
+};
+
     </script>
 </body>
 
