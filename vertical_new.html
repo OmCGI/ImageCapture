@@ -113,7 +113,7 @@
             canvas.height = highResolutionHeight;
 
             const ctx = canvas.getContext("2d");
-            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingEnabled = false;
             ctx.imageSmoothingQuality = 'high';
 
             // Calculate scaling to cover the high-resolution canvas
