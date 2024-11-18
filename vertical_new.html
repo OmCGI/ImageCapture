@@ -105,8 +105,8 @@
     imageCapture.grabFrame()
         .then(imageBitmap => {
             // Set higher canvas resolution for better quality
-            const highResolutionWidth = window.innerWidth * 4; // Double the resolution
-            const highResolutionHeight = window.innerHeight * 4;
+            const highResolutionWidth = window.innerWidth * 2; // Double the resolution
+            const highResolutionHeight = window.innerHeight * 2;
 
             // Adjust the canvas size to a higher resolution
             canvas.width = highResolutionWidth;
@@ -124,7 +124,7 @@
             ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
             // Generate a high-quality data URL for download
-            const canvasDataURL = canvas.toDataURL("image/jpeg", 1.0);
+            const canvasDataURL = canvas.toDataURL("image/jpeg", 0.9);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
             canvas.classList.remove("hidden");
