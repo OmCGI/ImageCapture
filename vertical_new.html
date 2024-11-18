@@ -172,7 +172,7 @@
         }
 
         downloadButton.onclick = function () {
-    const imageDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    const imageDataUrl = canvas.toDataURL("image/jpeg", 1);
     if (navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("iPad")) {
         window.open(imageDataUrl, "_blank");
     } else {
