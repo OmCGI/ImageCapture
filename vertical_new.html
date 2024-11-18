@@ -124,7 +124,7 @@
             ctx.drawImage(imageBitmap, x, y, imageBitmap.width * scale, imageBitmap.height * scale);
 
             // Generate a high-quality data URL for download
-            const canvasDataURL = canvas.toDataURL("image/jpeg", 0.9);
+            const canvasDataURL = canvas.toDataURL("image/jpeg", 1);
             document.getElementById("imagCanvaslink").src = canvasDataURL;
             document.getElementById("canvas_div").classList.remove("hidden");
             canvas.classList.remove("hidden");
